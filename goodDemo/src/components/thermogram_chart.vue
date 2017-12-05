@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div id="timeline2" style="width:100%;height: 450px;"></div>
+    <div id="timeline2" style="width:100%; bottom: 20px;"></div>
   </div>
 </template>
 
@@ -23,10 +23,10 @@
       timeLineRect: function() {
         var height = $(document).height()
         TimeKnots.draw("#timeline2", this.timeStamps, {
-          color: "#455A64",
-          height: height,
-          width: 200,
-          showLabels: true,
+          color: "#26282D",
+          height: 800,
+          width: 70,
+          showLabels: false,
           labelFormat: "%H:%M",
           dateFormat: "%H:%M",
           radius: 6,

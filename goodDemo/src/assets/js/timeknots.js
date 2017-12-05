@@ -209,12 +209,12 @@ export var TimeKnots = {
                 var endString = maxValue;
             }
             svg.append("text")
-                .text(startString).style("font-size", "70%")
+                .text(startString).style("font-size", "100%")
                 .attr("x", function(d) { if (cfg.horizontalLayout) { return d3.max([0, (margin - this.getBBox().width / 2)]) } return Math.floor(this.getBBox().width / 2) })
                 .attr("y", function(d) { if (cfg.horizontalLayout) { return Math.floor(cfg.height / 2 + (margin + this.getBBox().height)) } return margin + this.getBBox().height / 2 });
 
             svg.append("text")
-                .text(endString).style("font-size", "70%")
+                .text(endString).style("font-size", "100%")
                 .attr("x", function(d) { if (cfg.horizontalLayout) { return cfg.width - d3.max([this.getBBox().width, (margin + this.getBBox().width / 2)]) } return Math.floor(this.getBBox().width / 2) })
                 .attr("y", function(d) { if (cfg.horizontalLayout) { return Math.floor(cfg.height / 2 + (margin + this.getBBox().height)) } return cfg.height - margin + this.getBBox().height / 2 })
         }

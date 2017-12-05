@@ -1,32 +1,31 @@
 <template>
   <div style="margin-bottom: -50px;">
-    <component :is="currentView" @main-on-change="mainOnChange" @bar-on-change="barOnChange"></component>
-    <navBar></navBar>
+    <component :is="currentView" @main-on-change="mainOnChange" @bar-on-change="barOnChange" @change-title="navBarTitleChange"></component>
+    <navBar :title="navBarTitle"></navBar>
     <!-- <router-view/> -->
   </div>
 </template>
 
 <script>
-  import demo from './components/demo';
   import mainPage from './components/mainPage';
   import navBar from './components/navBar';
-  import thermogram from './components/thermogram';
+  import planRoute from './components/planRoute';
 
   export default {
     name: 'app',
     components: {
-      demo,
       mainPage,
       navBar,
-      thermogram,
+      planRoute,
     },
     data() {
       return {
         mainPage: mainPage,
-        currentView: thermogram,
+        currentView: mainPage,
         img1: '../static/images/map.jpg',
         logo: '../static/images/logo.png',
         img2: '../static/images/map_ex.png',
+        navBarTitle: "Map-Matching",
       }
     },
     methods: {
@@ -35,7 +34,10 @@
       },
       barOnChange(val) {
         this.currentView = val;
-      }
+      },
+      navBarTitleChange(val) {
+        this.navBarTitle = val
+      },
     }
   }
 </script>

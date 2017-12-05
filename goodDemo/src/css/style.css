@@ -5,7 +5,7 @@
 .settings {
     height: 73px;
     float: left;
-    background-image: url(http://s3.postimg.org/bqfooag4z/startific.jpg);
+    /* background-image: url(http://s3.postimg.org/bqfooag4z/startific.jpg); */
     background-repeat: no-repeat;
     width: 250px;
     margin: 0px;
@@ -39,7 +39,7 @@
 
 .main-menu:hover,
 nav.main-menu.expanded {
-    width: 250px;
+    width: 300px;
     overflow: hidden;
     opacity: 1;
 }
@@ -48,11 +48,11 @@ nav.main-menu.expanded {
     background: #F7F7F7;
     border-right: 1px solid #e5e5e5;
     position: absolute;
-    top: 0;
+    top: 8.5%;
     bottom: 0;
-    height: 100%;
+    height: 82%;
     left: 0;
-    width: 55px;
+    width: 5%;
     overflow: hidden;
     -webkit-transition: width .2s linear;
     transition: width .2s linear;
@@ -68,12 +68,13 @@ nav.main-menu.expanded {
 .main-menu li {
     position: relative;
     display: block;
-    width: 250px;
+    width: 300px;
+    height: 73px;
 }
 
 .main-menu li>a {
     position: relative;
-    width: 255px;
+    width: 300px;
     display: table;
     border-collapse: collapse;
     border-spacing: 0;
@@ -104,7 +105,9 @@ nav.main-menu.expanded {
     display: table-cell;
     vertical-align: middle;
     width: 190px;
-    font-family: 'Titillium Web', sans-serif;
+    /* font-family: 'Titillium Web', sans-serif; */
+    /* font-family: "Impact"; */
+    /* font-size: 30px; */
 }
 
 .main-menu .share {}
@@ -175,6 +178,28 @@ nav.main-menu li.active>a,
     background: #e2e2e2;
     width: 100%;
     height: 100%;
+}
+
+#upload {
+    position: relative;
+    height: 26px;
+    width: 150px;
+    /* font-size: 18px; */
+    margin: 5px;
+    text-align: center;
+    /* font-family: "Impact"; */
+    color: #26292F;
+    left: 10%;
+    top: 25px;
+    border: 0.1px;
+    border-radius: 8px;
+}
+
+#trash {
+    position: relative;
+    left: 80%;
+    top: 30%;
+    color: #26292F;
 }
 
 @font-face {

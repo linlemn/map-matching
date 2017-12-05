@@ -1,15 +1,38 @@
 <template>
     <div class="page">
-        <div id="map_id" style="height: 100%">
-            <v-map ref="map" style="height: 100%" :zoom="zoom" :center="center" @l-click="onMapClick($event)">
+        <div id="map_id">
+            <v-map ref="map" style="top: 10%" :zoom="zoom" :center="center" @l-click="onMapClick($event)">
                 <v-tilelayer :url="url" :attribution="attribution" :maxZoom="maxZoom"></v-tilelayer>
             </v-map>
-            <div id="navigate-container">
-                <input type="file" name="upload" id="upload" accept="text/plain" @change="uploadChange($event)" />
-                <input type="button" id="clickMe" value="清空数据" @onclick="clickMe()" style="margin-right:70px;" />
-            </div>
-            <timeline v-on:click.native="getDateValueTheSame()" v-if="flag"></timeline>
+            <!-- <timeline v-on:click.native="getDateValueTheSame()" v-if="flag"></timeline> -->
         </div>
+        <nav class="main-menu" style="z-index: 12; overflow: auto;">
+            <ul>
+                <li>
+                    <a href="#" style="left:10px">
+                        <!-- <i class="fa fa-t" style="margin: 7px"></i> -->
+                        <input type="file" name="upload" id="upload" accept="text/plain" @change="uploadChange($event)" />
+                    </a>
+                </li>
+                <li>
+                    <div style="">
+                        <timeline v-on:click.native="getDateValueTheSame()" v-if="flag"></timeline>
+                    </div>
+                </li>
+            </ul>
+            <!-- <div v-if="flag" id="trash">
+                        <a href="#">
+                            <i class="fa fa-trash" style="margin: 5px;"></i>
+                            <span class="nav-text" v-on:click="clickMe()" style="text-align: right"></span>
+                        </a>
+                 </div> -->
+        </nav>
+        <footer class="bottom">
+            <div class="container setFooter">
+                <p>Copyright © 2016-2017 Mobile Computing Group</p>
+                <p>版权所有 © 2016-2017 移动计算课题组</p>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -17,7 +40,6 @@
     import Vue2Leaflet from 'vue2-leaflet'
     import test from '../assets/py/edge_geometry.json'
     import '../assets/js/leaflet-heat'
-    // import '../assets/js/leaflet.polylineDecorator'
     import timeline from './thermogram_chart.vue'
     import {
         storeData
@@ -40,13 +62,14 @@
                 edgeGeometry: [],
                 heatLayer: [],
                 points: [],
+                title: "Traffic Prediction",
             }
         },
         components: {
             'v-map': Vue2Leaflet.Map,
             'v-tilelayer': Vue2Leaflet.TileLayer,
             'v-popup': Vue2Leaflet.Popup,
-            'timeline': timeline
+            'timeline': timeline,
         },
         methods: {
             onMapClick: function(e) {
@@ -64,6 +87,7 @@
                 var obj = document.getElementById('upload');
                 obj.value = '';
                 this.resultArr = [];
+                this.flag = false
                 this.clearMyMap();
             },
             clearMyMap: function() {
@@ -76,6 +100,7 @@
                         }
                     }
                 }
+                this.$refs.map.mapObject.removeLayer(this.heatLayer)
             },
             getFileContent: function(fileInput, callback) {
                 if (fileInput.files && fileInput.files.length > 0 && fileInput.files[0].size > 0) {
@@ -132,7 +157,6 @@
                 // var data = this.points
                 var data = this.getPoints()
                 var j = 0
-                
                 // var e = test.edgeGeometry
                 // var len = this.len
                 for (var i = 0; i < test.edgeGeometry.length; i++) {
@@ -181,8 +205,8 @@
                 // this.points.length = 0
                 var points = []
                 var e = test.edgeGeometry
-                for(var i = 0; i < e.length; i++) {
-                    for(var j = 2; j < e[i].length; j++) {
+                for (var i = 0; i < e.length; i++) {
+                    for (var j = 2; j < e[i].length; j++) {
                         points.push(e[i][j])
                     }
                 }
@@ -191,7 +215,9 @@
         },
         watch: {
             clickDate: function(val) {
-                var temp = new Date(val).toLocaleTimeString('chinese',{hour12:false})
+                var temp = new Date(val).toLocaleTimeString('chinese', {
+                    hour12: false
+                })
                 console.log(temp)
                 var time = temp.substring(0, 2)
                 console.log(time)
@@ -199,29 +225,38 @@
                 this.$refs.map.mapObject.removeLayer(this.heatLayer)
                 this.integrate(parseInt(time), this.totalArr)
             },
-            // test: function(val) {
-            //     console.log(val)
-            // }
         },
-        // mounted: function() {
-        //     this.edgeGeometry = test.edgeGeometry
-        // },
     }
 </script>
 
-<style scoped lang="stylus">
-
-    #navigate-container {
-        position: absolute;
-        left: 70px;
-        top: 300px;
-        z-index: 1000;
-        vertical-align: middle;
-    }
-
+<style>
+    @import "../css/style.css";
+    @import "../css/app_css.css";
+    @import "../css/set1.css";
     #upload {
-        height: 20px;
-        width: 180px;
+        height: 30px;
+        width: 200px;
         font-size: 10px;
+    }
+    .setFooter {
+        background: #26292F;
+        height: 5%;
+        width: 450%;
+        position: relative;
+        top: 100px;
+        padding: 13px;
+        z-index: 13;
+    }
+    .my-navbar {
+        padding: 0;
+        background: #26292F;
+        height: 70px;
+        padding: 15px;
+    }
+    #trash {
+        position: relative;
+        left: 80%;
+        top: 30%;
+        color: #26292F;
     }
 </style>
