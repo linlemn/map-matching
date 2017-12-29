@@ -8,6 +8,7 @@
     
     body {
         overflow-x: hidden;
+        background: white;
     }
     
     html {
@@ -42,11 +43,11 @@
     
     .setFooter {
         background: #26292F;
-        height: 5%;
-        width: 450%;
+        height: 90px;
+        width: 5000%;
         position: relative;
         top: 100px;
-        padding: 13px;
+        padding: 25px;
         z-index: 13;
     }
     
@@ -56,6 +57,7 @@
         color: white;
         font-weight: 200;
         font-family: Helvetica Neue;
+        font-size: 13px;
     }
     
     .ex_img {
@@ -138,6 +140,7 @@
         font-size: 64px;
         font-family: Helvetica Neue;
         font-weight: 900;
+        color: white;
     }
     
     .carousel p {

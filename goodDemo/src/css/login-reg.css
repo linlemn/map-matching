@@ -1,0 +1,15 @@
+.login-header {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #424242;
+    text-align: center;
+    font-size: 64px;
+}
+
+#login-box {
+    margin: 0 auto;
+    text-align: center;
+    z-index: 10;
+    /* position: absolute;
+    top: 10%;
+    left: 25%; */
+}
