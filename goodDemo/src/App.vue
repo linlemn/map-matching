@@ -26,6 +26,7 @@
         logo: '../static/images/logo.png',
         img2: '../static/images/map_ex.png',
         navBarTitle: "Map-Matching",
+        activeName: 'second'        
       }
     },
     methods: {
@@ -38,7 +39,7 @@
       navBarTitleChange(val) {
         this.navBarTitle = val
       },
-    }
+    },
   }
 </script>
 

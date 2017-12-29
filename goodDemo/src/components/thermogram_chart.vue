@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div id="timeline2" style="width:100%; bottom: 20px;"></div>
+    <div id="timeline2" style="position: relative; top:10px; width:100%; bottom: 20px;"></div>
   </div>
 </template>
 
@@ -30,7 +30,8 @@
           labelFormat: "%H:%M",
           dateFormat: "%H:%M",
           radius: 6,
-          horizontalLayout: false
+          horizontalLayout: false,
+          lineWidth: 2,
         })
       },
       getTimeStamp: function() {

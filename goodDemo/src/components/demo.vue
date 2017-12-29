@@ -9,10 +9,10 @@
             <ul>
                 <li>
                     <a href="#" style="left:10px">
-                        <!-- <i class="fa fa-t" style="margin: 7px"></i> -->
-                        <input type="file" name="upload" id="upload" accept="text/plain" @change="uploadChange($event)" />
-                        <i class="fa fa-t"></i>
-                    </a>
+                            <!-- <i class="fa fa-t" style="margin: 7px"></i> -->
+                            <input type="file" name="upload" id="upload" accept="text/plain" @change="uploadChange($event)" />
+                            <i class="fa fa-t"></i>
+                        </a>
                 </li>
                 <li>
                     <a href="#" style="left:10px">
@@ -32,9 +32,9 @@
                 <li>
                     <a href="#" style="left:10px">
                         <select id="mySelect" @onchange="mySelect()" :value="my_select_value">
-                                                        <option value="Arrow">Arrow</option>
-                                                        <option value="No Arrow">No Arrow</option>
-                                    </select>
+                                                            <option value="Arrow">Arrow</option>
+                                                            <option value="No Arrow">No Arrow</option>
+                                        </select>
                         <span id="title">     Show Directions</span>
                         <i class="fa fa-t"></i>
                     </a>
@@ -324,7 +324,7 @@
     input#quantity_high {
         position: relative;
         left: 10%;
-        top: 25px;
+        top: 5px;
         height: 26px;
         width: 92px;
         border: 0.1px;
@@ -333,15 +333,15 @@
     }
     #title {
         position: relative;
-        top: 28px;
+        top: 5px;
         font-family: "Impact";
-        font-size: 18px;
+        font-size: 0.6em;
         color: #26292F;
         left: 18%;
     }
     select {
         position: relative;
-        top: 25px;
+        top: 5px;
         width: 92px;
         height: 26px;
         background: #ffffff;
@@ -351,9 +351,9 @@
     }
     #range {
         position: relative;
-        top: 28px;
+        top: 5px;
         font-family: "Impact";
-        font-size: 18px;
+        font-size: 0.6em;
         color: #26292F;
         left: 33%;
         background: transparent;

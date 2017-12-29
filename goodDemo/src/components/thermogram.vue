@@ -1,7 +1,7 @@
 <template>
     <div class="page">
         <div id="map_id">
-            <v-map ref="map" style="top: 10%" :zoom="zoom" :center="center" @l-click="onMapClick($event)">
+            <v-map ref="map" :zoom="zoom" :center="center" @l-click="onMapClick($event)">
                 <v-tilelayer :url="url" :attribution="attribution" :maxZoom="maxZoom"></v-tilelayer>
             </v-map>
             <!-- <timeline v-on:click.native="getDateValueTheSame()" v-if="flag"></timeline> -->
