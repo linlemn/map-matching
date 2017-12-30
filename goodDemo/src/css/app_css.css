@@ -8,6 +8,7 @@
     
     body {
         overflow-x: hidden;
+        background: white;
     }
     
     html {
@@ -44,12 +45,12 @@
     
     .setFooter {
         background: #26292F;
-        height: 5%;
-        width: 450%;
+        height: 80px;
+        width: 100%;
         position: relative;
-        top: 100px;
-        padding: 13px;
+        /* top: 120px; */
         z-index: 13;
+        padding: 0px;
     }
     
     .setFooter p {
@@ -58,6 +59,7 @@
         color: white;
         font-weight: 200;
         font-family: Helvetica Neue;
+        font-size: 13px;
     }
     
     .ex_img {
@@ -92,7 +94,10 @@
     
     .my-navbar a {
         background: transparent !important;
-        color: #9e9e9e !important;
+        color: #e0e0e0 !important;
+        font-size: 18px;
+        font-family: Helvetica;
+        font-weight: 300;
     }
     
     .my-navbar a:hover {
@@ -140,6 +145,7 @@
         font-size: 64px;
         font-family: Helvetica Neue;
         font-weight: 900;
+        color: white;
     }
     
     .carousel p {

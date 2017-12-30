@@ -19,6 +19,10 @@ import Chartkick from 'chartkick'
 import VueChartkick from 'vue-chartkick'
 import Chart from 'chart.js'
 
+import VueAMap from 'vue-amap'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
 Vue.config.productionTip = false
 
 Vue.use(DatePicker);
@@ -34,7 +38,19 @@ Vue.use(RadioButton);
 Vue.use(VueChartkick, {
     Chartkick
 });
-// Vue.use(iView)
+
+Vue.config.productionTip = false
+
+Vue.use(ElementUI);
+Vue.use(VueAMap);
+// 初始化vue-amap
+VueAMap.initAMapApiLoader({
+    // 高德的key
+    key: '68612098266e626913da5e9c6fe6cbd0',
+    // 插件集合
+    plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor', 'AMap.Geolocation']
+});
+
 
 /* eslint-disable no-new */
 new Vue({
