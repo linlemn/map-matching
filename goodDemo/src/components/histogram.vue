@@ -47,18 +47,36 @@
             initData: function(latlng, timeStamp) {
                 //v-loading指令
                 //ajax请求拿数据
-                // console.log(latlng.lat)
-                $.post(this.urlHeader + '/destinations/hotValue', {
+                // $.post(this.urlHeader + '/destinations/hotValue', {
+                //         latitude: latlng.lat.toString(),
+                //         longitude: latlng.lng.toString(),
+                //         dayOfWeek: "1",
+                //         time: "1514127149992",
+                //         // time: timeStamp,
+                //     },
+                //     function(data) {
+                //         console.log(data)
+                //         //拿到数据
+                //     })
+                $.ajax({
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    url: this.urlHeader + '/destinations/hotValue',
+                    data: {
                         latitude: latlng.lat.toString(),
                         longitude: latlng.lng.toString(),
                         dayOfWeek: "1",
                         time: "1514127149992",
                         // time: timeStamp,
                     },
-                    function(data) {
+                    type: 'post',
+                    success: function(data) {
                         console.log(data)
                         //拿到数据
-                    })
+                    }
+                })
                 //绘制直方图，设置flag为true
                 this.flag = true
             },
@@ -74,6 +92,6 @@
         z-index: 12;
         background: rgba(0, 0, 0, 0.5);
         border-color: rgba(0, 0, 0, 0);
-        left:21%;
+        left: 21%;
     }
 </style>
