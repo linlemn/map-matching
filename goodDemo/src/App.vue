@@ -31,6 +31,10 @@
                                         <a href="#" @click="currentChange('planRoute')">Route Planning</a>
                                     </li>
                                     <li class="divider"></li>
+                                    <li>
+                                        <a href="#" @click="currentChange('hotspot')">Hot Spot</a>
+                                    </li>
+                                    <li class="divider"></li>
                                     <li><a href="#">More...</a></li>
                                 </ul>
                             </li>
@@ -62,6 +66,7 @@ import mine from "./components/mine";
 import loginReg from "./components/loginRegister";
 import thermogram from "./components/thermogram";
 import demo from "./components/demo";
+import hotSpot from './components/hotSpot';
 
 export default {
   name: "app",
@@ -69,7 +74,8 @@ export default {
     mainPage,
     planRoute,
     mine,
-    loginReg
+    loginReg,
+    hotSpot,
   },
   data() {
     return {
@@ -123,6 +129,10 @@ export default {
         case "planRoute":
           this.currentView = planRoute;
           this.title = "Route-Planning";
+          break;
+          case "hotspot":
+          this.currentView = hotSpot;
+          this.title = "Hot-Spot";
           break;
       }
     }

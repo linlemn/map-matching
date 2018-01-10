@@ -1,7 +1,9 @@
 <template>
   <div class="page">
-    <div id="amap_id">
-      <div id="map-container"> </div>
+    <div v-loading="ifLoadingPath">
+      <div id="amap_id">
+        <div id="map-container"> </div>
+      </div>
     </div>
     <div id="histogram">
       <histogram ref="histogram"></histogram>
@@ -10,19 +12,21 @@
       <ul id="pickers">
         <li>
           <div id="descrip">CHOOSE YOUR DESTINATION
-            <el-button size="small" type="text" style="position: relative; left: 35%; color: black" @click="getRoute">DONE</el-button>
+            <el-tooltip effect="dark" content="Click here to add this route to favourites" placement="bottom">
+              <el-button size="small" class="collect" type="text" style="position: relative; color: black; left: 17%" @click="addRouteToFavourites">COLLECT</el-button>
+            </el-tooltip>
+            <el-tooltip effect="dark" content="Click here to plan a route" placement="bottom">
+              <el-button size="small" class="collect" type="text" style="position: relative; left: 17%;  color: black" @click="getRoute">DONE</el-button>
+            </el-tooltip>
           </div>
         </li>
         <li>
-          <picker v-for="flag in flags" :key="picker" :map="mapObj" v-if="flag"></picker>
+          <picker v-for="flag in flags" :key="picker" :map="mapObj" v-if="flag.value"></picker>
         </li>
       </ul>
       <ul id="addPicker">
         <li>
           <add-picekr ref="addPicker"></add-picekr>
-        </li>
-        <li>
-          <el-button size="small" type="text" style="position: relative; color: black; float: left; padding: % 5%; font-family: 'Impact';" @click="addRouteToFavourites">CLICK HERE TO ADD THIS ROUTE TO FAVOURITES</el-button>
         </li>
       </ul>
     </nav>
@@ -41,7 +45,10 @@
   import histogram from "./histogram.vue";
   import AMap from "AMap";
   import AMapUI from "AMapUI";
-  import Qs from "qs";
+  import segmentLocations from '../assets/py/edge_geometry.json'
+  import {
+    GPS
+  } from '../assets/js/coordinateConverter'
   export default {
     data() {
       let self = this;
@@ -55,7 +62,9 @@
         flags: [],
         arriveTime: [],
         departureTime: [],
-        currentPathId: -1,
+        currentPathId: [],
+        edgeGeometry: segmentLocations.edgeGeometry,
+        ifLoadingPath: false,
       };
     },
     components: {
@@ -66,20 +75,18 @@
     methods: {
       clearPickerBlock: function(identifier) {
         //找到identifier对应的flag值
-        var index = -1;
         for (var i = 0; i < this.flags.length; i++) {
-          if (this.flags[i]) {
-            index++;
-            if (index == identifier) {
-              this.flags.splice(i, 1, false);
-              break;
-            }
+          if (this.flags[i].key == identifier) {
+            this.flags.splice(i, 1, {
+              key: identifier,
+              value: false
+            });
+            break;
           }
         }
+        console.log(this.flags)
         //removeMarker
-        // this.removeMarker((identifier + 1) * 2 - 1)
-        // this.removeMarker((identifier + 1) * 2)
-        this.removeMarker(identifier + 1);
+        this.removeMarker(identifier);
         //addPicker中的counter--
         this.$refs.addPicker.deleteAPicker();
         //删除pickers中的picker
@@ -100,6 +107,13 @@
         for (var i = 0; i < this.departureTime.length; i++) {
           if (this.departureTime[i][0] == identifier) {
             this.departureTime.splice(i, 1);
+            break;
+          }
+        }
+        // //删除poi
+        for (var i = 0; i < this.pois.length; i++) {
+          if (this.pois[i][1] == identifier) {
+            this.pois.splice(i, 1);
             break;
           }
         }
@@ -232,7 +246,10 @@
       },
       addAPicker: function(identifier) {
         this.pickers.push(identifier);
-        this.flags.push(true);
+        this.flags.push({
+          value: true,
+          key: identifier
+        });
       },
       getIdentifier: function() {
         return this.$refs.addPicker.pickerNum;
@@ -277,18 +294,18 @@
         }
         var wrapper = document.createElement("div");
         var title = document.createElement("div");
-        title.className = "title";
+        title.id = "title";
         title.innerText = poi.name;
         var titleDetail = document.createElement("div");
         // titleDetail.appendChild(document.createElement('br'))
-        titleDetail.className = "title detail";
+        titleDetail.id = "title detail";
         titleDetail.innerText = poi.address;
         var favourite = document.createElement("div");
-        favourite.className = "favourite";
+        favourite.id = "favourite";
         var favouriteImg = document.createElement("img");
         favouriteImg.src = "../../static/images/favourites_not_click.png";
         favouriteImg.onclick = addFavourite;
-        favouriteImg.className = "favourite favouriteImg";
+        favouriteImg.id = "favourite favouriteImg";
         // favourite.innerHTML = '<img src="../../static/images/favourites_not_click.png">'
         favourite.appendChild(favouriteImg);
         wrapper.appendChild(title);
@@ -298,8 +315,7 @@
       },
       getRoute: function() {
         let self = this;
-        //判断信息是否填写完毕，未填写完毕则退出
-        if (this.pois.length != this.arriveTime.length + 1) {
+        if (this.pois.length != this.arriveTime.length) {
           console.log([this.pois.length, this.arriveTime.length]);
           alert("Please complete neccessary information!");
           return;
@@ -307,92 +323,123 @@
           alert("At least one destination must be filled in");
           return;
         }
+        //清除直方图
+        self.setHistogramFlagFalse()
+        //清空之前的currentPathId
+        self.currentPathId.length = 0
         //清空除了marker之外的之前的覆盖物
         self.mapObj.clearMap();
         for (var i = 0; i < self.markers.length; i++) {
           self.markers[i][0].setMap(self.mapObj);
         }
+        //post偏好出发时间的临时函数，下面会用到
+        function postPreferLeaveTime(identifier) {
+          var preferLeaveTime;
+          for (var i = 0; i < self.departureTime; i++) {
+            if (self.departureTime[i][0] == identifier) {
+              //若用户已经设定了出发时间就post一个请求
+              var pathId = self.currentPathId[self.currentPathId.length - 1]
+              $.ajax({
+                crossDomain: true,
+                xhrFields: {
+                  withCredentials: true
+                },
+                url: self.urlHeader + "/path/preferLeaveTime",
+                data: {
+                  pathId: pathId,
+                  // pathId: 1,
+                  preferLeaveTime: self.departureTime[i][1]
+                },
+                type: 'post',
+                dataType: "json",
+                success: function(data) {
+                  console.log(data)
+                  //拿到数据
+                }
+              })
+              break;
+            }
+          }
+        }
+        //发送目的地
         function postDestinations(destinations) {
-          //新建一条路径并且获取路径id
+          //post偏好出发时间
+          postPreferLeaveTime(destinations[0][1]);
+          var info = []
+          //整合终点信息
+          for (var i = 0; i < destinations.length; i++) {
+            var identifier = destinations[i][1];
+            //转换高德坐标为openstreetmap坐标
+            var transferToGPS = GPS.gcj_decrypt_exact(destinations[i][0].location.lat, destinations[i][0].location.lng)
+            // //获取当前路径
+            // var pathId = self.currentPathId[self.currentPathId.length - 1]
+            //获取当前identifier对应的到达时间
+            var arriveTime
+            for (var j = 0; j < self.arriveTime.length; j++) {
+              if (self.arriveTime[j][0] == identifier) {
+                arriveTime = self.arriveTime[j][1]
+              }
+            }
+            info.push({
+              "latitude": transferToGPS.lat,
+              "longitude": transferToGPS.lon,
+              "arriveTime": arriveTime
+            })
+          }
+          //设置遮罩
+          self.ifLoadingPath = true
+          //发送终点
           $.ajax({
             crossDomain: true,
             xhrFields: {
               withCredentials: true
             },
-            url: self.urlHeader + "/path",
-            type: "post",
-            data: {},
+            // url: self.urlHeader + "/path/destinations",
+            url: self.urlHeader + "/path/destinations_alg2", //第二个算法的url
+            data: JSON.stringify(info),
+            dataType: "json",
+            type: 'post',
             success: function(data) {
-              self.currentPathId = data.id;
-              console.log(data);
-            }
-          });
-          //post偏好出发时间的临时函数，下面会用到
-          function postPreferLeaveTime(identifier) {
-            var preferLeaveTime;
-            for (var i = 0; i < self.departureTime; i++) {
-              if (self.departureTime[i][0] == identifier) {
-                //若用户已经设定了出发时间就post一个请求
-                $.ajax({
-                  crossDomain: true,
-                  xhrFields: {
-                    withCredentials: true
-                  },
-                  url: self.urlHeader + "/path/preferLeaveTime",
-                  data: {
-                    // pathId: self.currentPathId,
-                    pathId: 1,
-                    preferLeaveTime: self.departureTime[i][1]
-                  },
-                  type: 'post',
-                  success: function(data) {
-                    console.log(data)
-                    //拿到数据
-                  }
-                })
-                break;
+              //拿到数据
+              console.log(data)
+              //清空drivingdest
+              drivingDest.length = 0;
+              //绘制路径
+              //拿到数据并且格式化数据
+              // var segmentId = JSON.parse(data.data.recommendPath).detail.split(',')
+              var segmentId = data.data.recommendPath.split(',').splice(data.data.recommendPath.length - 1)
+              for (var i = 0; i < segmentId.length; i++) {
+                segmentId[i] = parseInt(segmentId[i])
               }
-            }
-          }
-          for (var i = 0; i < destinations.length; i++) {
-            var identifier = destinations[i][1];
-            postPreferLeaveTime(identifier);
-            // $.post(
-            //   self.urlHeader + "/path/destination", {
-            //     // pathId: pathId,
-            //     pathId: 1,
-            //     desOrder: i + 1,
-            //     latitude: destinations[i][0].location.lat,
-            //     longitude: destinations[i][0].location.lng,
-            //     dayOfWeek: 1,
-            //     arriveTime: self.arriveTime[i][1]
-            //   },
-            //   function(data) {
-            //     console.log(data);
-            //   }
-            // );
-            $.ajax({
-              crossDomain: true,
-              xhrFields: {
-                withCredentials: true
-              },
-              url: self.urlHeader + "/path/destination",
-              data: {
-                // pathId: self.currentPathId,
-                pathId: 1,
-                desOrder: i + 1,
-                latitude: destinations[i][0].location.lat,
-                longitude: destinations[i][0].location.lng,
-                dayOfWeek: 1,
-                arriveTime: self.arriveTime[i][1]
-              },
-              type: 'post',
-              success: function(data) {
-                console.log(data)
-                //拿到数据
+              // var segmentId = [82357,87386,87384,87385,87389,695,696,697,842,843,844,13442,13440,13443,18458,852,853,854,855,23484,12635,12646,58812,23487,23488,23489,23490,23491,71489]
+              //路径绘制
+              for (var i = 0; i < segmentId.length; i++) {
+                //拿到路段的经纬度
+                var coordinates = self.edgeGeometry[segmentId[i]].slice(2)
+                //转换成高德坐标系
+                for (var j = 0; j < coordinates.length; j++) {
+                  var tranferLocation = GPS.gcj_encrypt(coordinates[j][0], coordinates[j][1])
+                  coordinates[j] = new AMap.LngLat(tranferLocation.lon, tranferLocation.lat)
+                }
+                //在地图上之间画线
+                var polyline = new AMap.Polyline({
+                  path: coordinates, //设置线覆盖物路径   
+                  strokeOpacity: 1, //线透明度   
+                  strokeWeight: 5, //线宽  
+                  strokeStyle: "dashed", //线样式  
+                  strokeDasharray: [10, 5], //补充线样式 
+                  strokeColor: '#51CBA7',
+                });
+                polyline.setMap(self.mapObj);
+                //拿到的路径id保存起来
+                self.currentPathId.push(data.data.id)
+                //关闭遮罩
+                self.ifLoadingPath = false
               }
-            })
-          }
+              return
+            },
+            contentType: "application/json"
+          })
         }
         var drivingDest = [];
         //post目的地
@@ -400,6 +447,10 @@
           //选择驾车的出行方式
           if (this.pois[i][2] == "Drive") {
             drivingDest.push(this.pois[i]);
+            //若此时为最后一个点则开始规划路线
+            if (i == this.pois.length - 1) {
+              postDestinations(drivingDest);
+            }
           } else {
             //选择非驾车的出行方式
             //此时若drivingDest是空，什么都不干，直接调用高德api取下一个点规划路径，否则post destinations，获取一条路径然后在地图上绘制
@@ -407,8 +458,6 @@
               //取下一个点作为终点
               drivingDest.push(this.pois[i + 1]);
               postDestinations(drivingDest);
-              //清空drivingdest
-              drivingDest.length = 0;
             } else {
               //如果该点为最后一个点，退出循环
               if (i == this.pois.length - 1) {
@@ -471,10 +520,7 @@
             }
           }
         }
-        //获取最佳路径
-        //路径绘制
       },
-      routeDrawing: function(data) {},
       changeTransportation: function(identifier, newTrans) {
         for (var i = 0; i < this.pois.length; i++) {
           if (this.pois[i][1] == identifier) {
@@ -487,40 +533,38 @@
         this.pois.push([null, identifier, newTrans]);
       },
       addRouteToFavourites: function() {
-        if (this.currentPathId == -1) {
+        var self = this
+        if (this.currentPathId.length == 0) {
           alert("Please plan a route first!")
+          return
         }
-        $.ajax({
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          },
-          url: this.urlHeader + "/favorites/path",
-          data: {
-            // pathId: this.currentPathId
-            pathId: 1
-          },
-          type: 'post',
-          success: function(data) {
-            console.log(data)
-            //拿到数据
-          }
-        })
+        function postFavourite(i) {
+          $.ajax({
+            crossDomain: true,
+            xhrFields: {
+              withCredentials: true
+            },
+            url: this.urlHeader + "/favorites/path",
+            data: {
+              pathId: self.currentPathId[i]
+              // pathId: 1
+            },
+            type: 'post',
+            success: function(data) {
+              console.log(data)
+              //拿到数据
+              i++
+              postFavourite(i)
+            }
+          })
+        }
+        //开始递归
+        postFavourite(0)
       },
     },
     mounted() {
       this.initMap();
       //登录
-      // $.post(
-      //   this.urlHeader + "/users/login", {
-      //     userName: "test",
-      //     email: "test@test.com",
-      //     passWord: "test"
-      //   },
-      //   function(data) {
-      //     console.log(data);
-      //   }
-      // );
       $.ajax({
         crossDomain: true,
         xhrFields: {
@@ -529,7 +573,6 @@
         url: this.urlHeader + "/users/login",
         data: {
           userName: "test",
-          email: "test@test.com",
           passWord: "test"
         },
         type: 'post',
@@ -538,28 +581,6 @@
           //拿到数据
         }
       })
-      $.ajax({
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        url: this.urlHeader + "/users/info",
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-          console.log(data);
-          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
-            self.username = data.data.userName;
-            self.introduction = data.data.introduction;
-          } else {
-            console.log(data);
-            self.$message.error(data.rspMsg);
-          }
-        },
-        error: function(er) {
-          // BackErr(er);
-        }
-      });
     }
   };
 </script>
@@ -573,10 +594,37 @@
     height: 70px;
     padding: 15px;
   }
+  #favourite {
+    position: relative;
+    left: 48%;
+    cursor: pointer;
+    top: 0%;
+    transition: all 0.4s;
+  }
+  #favouriteImg {
+    position: relative;
+  }
+  #favouriteImg:hover {
+    transform: scale(1.2);
+  }
+  #title {
+    font-size: 1.2em;
+    color: #26292f;
+    /* text-indent: 10px; */
+    padding: 5px;
+    font-family: "PingFang SC";
+    font-weight: 200;
+  }
+  #detail {
+    font-size: 0.2rem;
+    color: #424242;
+    margin-top: -20px;
+    margin-right: 25px;
+  }
 </style>
 
 
-<style>
+<style scoped>
   .setFooter {
     background: #26292f;
     height: 90px;
@@ -595,26 +643,6 @@
     font-family: Helvetica Neue;
     font-size: 13px;
   }
-  .my-navbar {
-    padding: 0;
-    background: #26292f;
-    height: 70px;
-    padding: 15px;
-  }
-  .title {
-    font-size: 1.2em;
-    color: #26292f;
-    /* text-indent: 10px; */
-    padding: 5px;
-    font-family: "PingFang SC";
-    font-weight: 200;
-  }
-  .detail {
-    font-size: 0.2rem;
-    color: #424242;
-    margin-top: -20px;
-    margin-right: 25px;
-  }
   #descrip {
     position: relative;
     left: 7%;
@@ -628,17 +656,10 @@
     top: 55%;
     width: 100%;
   }
-  .favourite {
-    position: relative;
-    left: 48%;
-    cursor: pointer;
-    top: 0%;
+  .collect {
     transition: all 0.4s;
   }
-  .favouriteImg {
-    position: relative;
-  }
-  .favouriteImg:hover {
+  .collect:hover {
     transform: scale(1.2);
   }
 </style>
