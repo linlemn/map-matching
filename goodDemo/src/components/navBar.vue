@@ -27,6 +27,9 @@
                                     <li>
                                         <a href="#">Route Planning</a>
                                     </li>
+                                    <li>
+                                        <a href="#">Hot Spot</a>
+                                    </li>
                                     <li class="divider"></li>
                                     <li><a href="#">More...</a></li>
                                 </ul>
