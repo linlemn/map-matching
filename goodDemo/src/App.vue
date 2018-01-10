@@ -43,8 +43,13 @@
             </div>
       </nav>
       <component :is="currentView"
-      @main-on-change="mainOnChange" @change-title="navBarTitleChange">
-      </component>  
+      @main-on-change="mainOnChange"
+      @change-title="navBarTitleChange"
+      @click-on-point="clickOnPoint"
+      @is-main-pan-location="isMainPanLocation"
+      v-bind:isPanLocation="isPanLocation"
+      v-bind:resetCenter="resetCenter">
+      </component>   
     </div>
     <div v-else>
       <loginReg  @login-success="loginSuccess"></loginReg>
@@ -79,13 +84,22 @@ export default {
       img1: "../static/images/map.jpg",
       logo: "../static/images/logo.png",
       img2: "../static/images/map_ex.png",
-      navBarTitle: "Map-Matching",
       activeName: "second",
-      isLogin: true,
-      title: "iTrip"
+      isLogin: false,
+      title: "iTrip",
+      isPanLocation: true,
+      resetCenter: '',
     };
   },
   methods: {
+    isMainPanLocation(val){
+      this.isPanLocation = val
+    },
+    clickOnPoint(val){
+      this.currentView = planRoute;
+      this.resetCenter = val;
+      this.isPanLocation = false;
+    },
     mainOnChange(val) {
       this.currentView = val;
     },
@@ -94,6 +108,7 @@ export default {
     },
     loginSuccess(val) {
       this.isLogin = val;
+      this.currentView = mainPage;
     },
     toMine: function() {
       this.currentView = mine;
@@ -106,7 +121,7 @@ export default {
     logout: function() {
       this.isLogin = false;
       this.$message({
-        message: "注销成功！",
+        message: "Successfully Logout！",
         type: "success"
       });
     },
@@ -123,6 +138,7 @@ export default {
         case "planRoute":
           this.currentView = planRoute;
           this.title = "Route-Planning";
+          this.isPanLocation = true;
           break;
       }
     }
@@ -131,6 +147,9 @@ export default {
     title(val) {
       $(".nav-brand").innerHTML = val;
     }
+  },
+  mounted(){
+
   }
 };
 </script>

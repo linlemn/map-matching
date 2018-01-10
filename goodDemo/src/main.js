@@ -4,17 +4,18 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
-import Option from 'element-ui/lib/option';
-import DatePicker from 'element-ui/lib/date-picker';
-import Input from 'element-ui/lib/input';
-import Button from 'element-ui/lib/button';
-import Card from 'element-ui/lib/card';
-import Popover from 'element-ui/lib/popover';
-import Radio from 'element-ui/lib/radio';
-import RadioGroup from 'element-ui/lib/radio-group';
-import RadioButton from 'element-ui/lib/radio-button';
-import Upload from 'element-ui/lib/upload';
-import ToolTip from 'element-ui/lib/tooltip';
+// import Option from 'element-ui/lib/option';
+// import DatePicker from 'element-ui/lib/date-picker';
+// import Input from 'element-ui/lib/input';
+// import Button from 'element-ui/lib/button';
+// import Card from 'element-ui/lib/card';
+// import Popover from 'element-ui/lib/popover';
+// import Radio from 'element-ui/lib/radio';
+// import RadioGroup from 'element-ui/lib/radio-group';
+// import RadioButton from 'element-ui/lib/radio-button';
+// import Upload from 'element-ui/lib/upload';
+// import ToolTip from 'element-ui/lib/tooltip';
+import ElementUI from 'element-ui';
 
 import Chartkick from 'chartkick'
 import VueChartkick from 'vue-chartkick'
@@ -24,20 +25,22 @@ import VueAMap from 'vue-amap'
 
 Vue.config.productionTip = false
 
-Vue.use(DatePicker);
-Vue.use(Input);
-Vue.use(Button);
-Vue.use(Card);
-Vue.use(Upload);
-Vue.use(Option)
-Vue.use(Popover);
-Vue.use(Radio);
-Vue.use(RadioGroup);
-Vue.use(RadioButton);
+// Vue.use(DatePicker);
+// Vue.use(Input);
+// Vue.use(Button);
+// Vue.use(Card);
+// Vue.use(Upload);
+// Vue.use(Option)
+// Vue.use(Popover);
+// Vue.use(Radio);
+// Vue.use(RadioGroup);
+// Vue.use(RadioButton);
+// Vue.use(ToolTip);
 Vue.use(VueChartkick, {
     Chartkick
 });
-Vue.use(ToolTip);
+Vue.use(ElementUI);
+
 
 Vue.config.productionTip = false
 

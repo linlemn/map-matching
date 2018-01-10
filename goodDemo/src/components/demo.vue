@@ -56,7 +56,7 @@
         <footer class="bottom">
             <div class="container setFooter">
                 <p>Copyright © 2016-2017 Mobile Computing Group</p>
-                <p>版权所有 © 2016-2017 移动计算课题组</p>
+                <!-- <p>版权所有 © 2016-2017 移动计算课题组</p> -->
             </div>
         </footer>
     </div>

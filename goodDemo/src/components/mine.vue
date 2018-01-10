@@ -2,7 +2,7 @@
 <div>
     <div id="user-info" class="panel panel-default">
         <a><img :src="avatar" class="img-circle" id="user-avatar" @click="dialogAvatarVisible = true"></a>
-        <el-dialog title="上传头像" :visible.sync="dialogAvatarVisible" center>
+        <el-dialog title="Upload Avatar" :visible.sync="dialogAvatarVisible" center>
             <el-upload
                 action="https://echo.paw.cloud"
                 list-type="picture-card"
@@ -14,29 +14,29 @@
             <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="setAvatar" style="z-index: 2002">确 定</el-button>
+                <el-button type="primary" @click="setAvatar" style="z-index: 2002">OK</el-button>
             </div>
         </el-dialog>
 
         <h1 id="user-name">{{username}}</h1>
         <p id="introduction">{{introduction}}</p>
         <div class="change-part">
-            <el-button class="button-font" type="text" @click="changeIntroduction">修改简介</el-button>
+            <el-button class="button-font" type="text" @click="changeIntroduction">Set Introduction</el-button>
             <button class="button-font">|</button>
-            <el-button class="button-font" type="text" @click="dialogFormVisible = true">修改密码</el-button>
+            <el-button class="button-font" type="text" @click="dialogFormVisible = true">Set Password</el-button>
             <div>              
-                <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-                    旧密码
-                    <el-input v-model="form.oldPwd" auto-complete="off" placeholder="请输入您的旧密码" ></el-input>
+                <el-dialog title="Set Password" :visible.sync="dialogFormVisible">
+                    Old Password
+                    <el-input v-model="form.oldPwd" auto-complete="off" placeholder="Enter your old password" type="password"></el-input>
                     <p> </p>
                     <!-- 验证码
                     <el-input v-model="form.verification" auto-complete="off" placeholder="请输入您的收到的验证码"></el-input>
                     <p> </p> -->
-                    新密码
-                    <el-input v-model="form.newPwd" auto-complete="off" placeholder="请输入您的新密码"></el-input>
+                    New Password
+                    <el-input v-model="form.newPwd" auto-complete="off" placeholder="Enter your new password" type="password"></el-input>
                     <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="changePwd">确 定</el-button>
+                        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                        <el-button type="primary" @click="changePwd">OK</el-button>
                     </div>
                 </el-dialog>
             </div>
@@ -50,16 +50,23 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">目的地收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Destinations Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin" >Collect your destinations</p>
                                 <hr>
                             </div>                           
                         </div>
                     </div>
                     <div class="uk-card-body">
-                        <ul class="uk-list uk-list-divider">
+                        <ul class="uk-list">
                             <li v-for="des in Destinations">
-                                <a class="uk-link-reset"><p class="li-p">{{des.title}}<i class="fa fa-angle-right" style="color: white; position: relative; left:10%;"></i></p></a>
+                                <a class="uk-link-reset" @click="clickPointsCollects(des)">
+                                    <el-alert
+                                        :title=des.title
+                                        type="success"
+                                        show-icon
+                                        @close="deleteDestination(des.id)">
+                                    </el-alert>
+                                </a>
                             </li>
                         </ul>
                     </div>               
@@ -70,7 +77,7 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">路径收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Routes Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin">Collect your paths</p>
                                 <hr>
                             </div>
@@ -86,15 +93,49 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">热点收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Hotspot Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin">Collect the hotspot</p>
                                 <hr>
                             </div>
                         </div>
                     </div>
                     <div class="uk-card-body">
-                        
-                    </div>               
+                      <ul class="uk-nav uk-nav-parent-icon uk-nav-primary" uk-nav>
+                        <!-- <li class="uk-active"><a href="#">Active</a></li> -->
+                        <li class="uk-parent">
+                            <a href="#" style="backgroud: white">Load Hotspots Collects</a>
+                            <ul class="uk-nav-sub uk-list">
+                              <li v-for="des in psgHotspots">
+                                <a class="uk-link-reset" @click="clickPointsCollects(des)">
+                                    <el-alert
+                                        :title=des.title
+                                        type="success"
+                                        show-icon
+                                        @close="deleteHotspot(des.id, '2')">
+                                    </el-alert>
+                                </a>
+                              </li>
+                            </ul>
+                        </li>
+                        <hr>
+                        <li class="uk-parent">
+                            <a href="#">Passengers Hotspots Collects</a>
+                            <ul class="uk-nav-sub uk-list">
+                               <li v-for="des in loadHotspots">
+                                <a class="uk-link-reset" @click="clickPointsCollects(des)">
+                                    <el-alert
+                                        :title=des.title
+                                        type="success"
+                                        show-icon
+                                        @close="deleteHotspot(des.id, '1')">
+                                    </el-alert>
+                                </a>
+                              </li>
+                            </ul>
+                        </li>
+                        <hr>
+                    </ul>        
+                  </div>               
                 </div>
             </div>
             <div class="uk-card card-bg">
@@ -102,7 +143,7 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">路径规划历史</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Routes History</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font">Latest path you have planned</p>
                                 <hr>
                             </div>
@@ -114,11 +155,10 @@
             </div>
         </div>
     </div>
-
     <footer class="bottom">
         <div class="container setFooter">
             <p>Copyright © 2016-2017 Mobile Computing Group</p>
-            <p>版权所有 © 2016-2017 移动计算课题组</p>
+            <!-- <p>版权所有 © 2016-2017 移动计算课题组</p> -->
          </div>
     </footer>  
 </div>
@@ -126,9 +166,6 @@
 </template>
 
 <script>
-// import "../../node_modules/uikit/dist/js/uikit";
-// import "../../node_modules/uikit/dist/js/uikit-icons";
-
 export default {
   name: "mine",
   data() {
@@ -136,14 +173,11 @@ export default {
       avatar: "static/images/map_ex.png",
       username: "bibi",
       introduction: "Latest path you have planned",
-      Destinations: [
-        { title: "同济大学嘉定校区" },
-        { title: "同济大学嘉定校区" },
-        { title: "同济大学嘉定校区" }
-      ],
+      Destinations: [],
+      titles: [],
       Paths: [],
-      Hotspot: [],
       Historys: [],
+      hotspots: [],
       dialogFormVisible: false,
       dialogAvatarVisible: false,
       form: {
@@ -154,26 +188,87 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       tempImage: "",
-      rs: ""
+      isDeleteDestination: false,
+      psgHotspots: [],
+      loadHotspots: [],
     };
   },
   methods: {
+    deleteHotspot(id, type){
+      console.log(id, type);
+      let self = this;
+      this.isDeleteDestination = true;
+      var subUrl = ''
+      if (type == "1") {
+        subUrl = '/favorites/psgHotNode'
+      }else {
+        subUrl = '/favorites/loadHotNode'
+      }
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + subUrl,
+        type: "POST",
+        data: {
+          id: id,
+          _method: "DELETE"
+        },
+        dataType: "json",
+        success: function(data) {
+          console.log(subUrl,data)
+          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+            self.$message({
+              type: "success",
+              message: "Successfully delete!"
+            });
+          } else {
+            self.$message.error("Fail! Please reload the website!");
+          }
+        },
+        error: function(er) {
+          self.$message.error("Network Error");
+        }
+      });
+    },
     changeIntroduction() {
-      this.$prompt("请输入您的新简介", "修改简介", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消"
+      this.$prompt("Please Enter your new introduction", "Set Introdction", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel"
       })
         .then(({ value }) => {
-          this.$message({
-            type: "success",
-            message: "修改成功！"
+          let self = this;
+          if (value == "") {
+            self.$message.error("");
+          }
+          $.ajax({
+            crossDomain: true,
+            xhrFields: { withCredentials: true },
+            url: self.urlHeader + "/users/introduction",
+            data: {
+              introduction: value
+            },
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+              if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+                self.introduction = value;
+                self.$message({
+                  type: "success",
+                  message: "Introdction Successfully Set！"
+                });
+              } else {
+                self.$message.error(data.rspMsg);
+              }
+            },
+            error: function(er) {
+              self.$message.error("Network Error！");
+            }
           });
-          this.introduction = value;
         })
         .catch(() => {
-          this.$message({
+          self.$message({
             type: "info",
-            message: "取消输入"
+            message: "Input Cancel"
           });
         });
     },
@@ -185,78 +280,236 @@ export default {
       this.tempImage = URL.createObjectURL(file.raw);
     },
     setAvatar() {
-      console.log(this.tempImage);
+      // console.log(this.tempImage);
       this.avatar = this.tempImage;
       this.dialogAvatarVisible = false;
     },
     changePwd() {
-      //   if(this.form.oldPwd == this.form.newPwd){
-      //       this.$message.error('新密码与旧密码相同！');
-      //   }else{
-      //   let self = this;
-      //   $.post(this.urlHeader + '/users/newPassword', {
-      //     newPassword: self.form.newPwd,
-      //     // userName: this.username4Reg,
-      //     oldPassword: self.form.oldPwd,
-      //     },
-      //     function(data) {
-      //         if (data.rspCode == 200 && data.rspMsg == '操作成功'){
-      //             console.log(data)
-      //             self.form.oldPwd='';
-      //             self.form.newPwd='';
-      //             self.$message({
-      //                 message: '修改成功！',
-      //                 type: 'success'
-      //             });
-      //             self.dialogFormVisible = false
-      //         }else{
-      //             self.$message.error(data.rspMsg);
-      //             return;
-      //         }
-      //     });
       let self = this;
-      $.post(
-        this.urlHeader + "/users/login",
-        {
-          userName: "test",
-          passWord: "newtest"
+      if (self.form.newPwd == self.form.oldPwd) {
+        self.$message.error("The same password！Please reset!");
+        return;
+      }
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + "/users/newPassword",
+        data: {
+          oldPassword: self.form.oldPwd,
+          newPassword: self.form.newPwd
         },
-        function(data) {
-          console.log(data);
-          self.rs = data.rspCode;
-          // console.log(self.rs)
-          console.log(self.rs);
-          if (self.rs == "200") {
-            $.post(
-              self.urlHeader + "/users/newPassword",
-              {
-                oldPassword: "test",
-                newPassword: "newtest"
-              },
-              function(data) {
-                console.log(data);
-              }
-            );
+        type: "POST",
+        dataType: "json",
+        success: function(data) {
+          // console.log(data);
+          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+            self.$message({
+              type: "success",
+              message: "Successfully Set Password！"
+            });
+          } else {
+            self.$message.error(data.rspMsg);
+            dialogFormVisible = false;
           }
+        },
+        error: function(er) {
+          self.$message.error("Network Error！");
         }
-      );
-
-      // axios.get(this.urlHeader + '/users/introduction')
-      //     .then(function (response) {
-      //         console.log(response);
-      //     })
-      //     .catch(function (error) {
-      //         console.log(error);
-      //     });
-
-      // $.get(this.urlHeader + '/users/info', {
-      // },
-      // function(data) {
-      //     console.log(data)
-      //     self.$message.error(data.rspMsg);
-      // });
-      //   }
+      });
+    },
+    getUserInfo() {
+      let self = this;
+      this.Destinations = []
+      this.psgHotspots = []
+      this.loadHotspots = []
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + "/users/info",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+          console.log(data);
+          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+            self.username = data.data.userName;
+            self.introduction = data.data.introduction;
+            if (data.data.destinationFavorites.destinations.length != 0) {
+              var des;
+              for (des in data.data.destinationFavorites.destinations) {
+                var coordinates = [];
+                coordinates.push(
+                  data.data.destinationFavorites.destinations[des].longitude
+                );
+                coordinates.push(
+                  data.data.destinationFavorites.destinations[des].latitude
+                );
+                self.queryForLocationTitles1(
+                  coordinates,
+                  data.data.destinationFavorites.destinations[des].id
+                );
+              }
+            }
+            if (data.data.psgHotFavorites.psgHotNodes.length != 0) {
+              var des;
+              for (des in data.data.psgHotFavorites.psgHotNodes) {
+                var coordinates = [];
+                coordinates.push(
+                  data.data.psgHotFavorites.psgHotNodes[des].longitude
+                );
+                coordinates.push(
+                  data.data.psgHotFavorites.psgHotNodes[des].latitude
+                );
+                self.queryForLocationTitles2(
+                  coordinates,
+                  data.data.psgHotFavorites.psgHotNodes[des].id
+                );
+              }
+            }
+            if (data.data.loadHotFavorites.loadHotNodes.length != 0) {
+              var des;
+              for (des in data.data.loadHotFavorites.loadHotNodes) {
+                var coordinates = [];
+                coordinates.push(
+                  data.data.loadHotFavorites.loadHotNodes[des].longitude
+                );
+                coordinates.push(
+                  data.data.loadHotFavorites.loadHotNodes[des].latitude
+                );
+                self.queryForLocationTitles3(
+                  coordinates,
+                  data.data.loadHotFavorites.loadHotNodes[des].id
+                );
+              }
+            }
+          } else {
+            self.$message.error(data.rspMsg);
+          }
+        },
+        error: function(er) {
+          self.$message.error("Network Error");
+        }
+      });
+    },
+    queryForLocationTitles1(coordinates, id) {
+      //根据经纬度获取poi
+      let self = this;
+      AMap.service("AMap.Geocoder", function() {
+        //回调函数
+        //实例化Geocoder
+        let geocoder = new AMap.Geocoder({
+          city: "021" //城市，默认：“全国”
+        });
+        //TODO: 使用geocoder 对象完成相关功能
+        geocoder.getAddress(coordinates, function(status, result) {
+          if (status === "complete" && result.info === "OK") {
+            //获得了有效的地址信息:
+            //即，result.regeocode.formattedAddress
+            var temp = { id: "", title: "", coordinates: [] };
+            temp.title = result.regeocode.formattedAddress;
+            temp.id = id;
+            temp.coordinates = coordinates;
+            self.Destinations.push(temp);
+          } else {
+            //获取地址失败
+            self.$message.error("Network Error!");
+            self.titles.push("Error");
+          }
+        });
+      });
+    },
+    queryForLocationTitles2(coordinates, id) {
+      //根据经纬度获取poi
+      let self = this;
+      AMap.service("AMap.Geocoder", function() {
+        //回调函数
+        //实例化Geocoder
+        let geocoder = new AMap.Geocoder({
+          city: "021" //城市，默认：“全国”
+        });
+        //TODO: 使用geocoder 对象完成相关功能
+        geocoder.getAddress(coordinates, function(status, result) {
+          if (status === "complete" && result.info === "OK") {
+            //获得了有效的地址信息:
+            //即，result.regeocode.formattedAddress
+            var temp = { id: "", title: "", coordinates: [] };
+            temp.title = result.regeocode.formattedAddress;
+            temp.id = id;
+            temp.coordinates = coordinates;
+            self.psgHotspots.push(temp);
+          } else {
+            //获取地址失败
+            self.$message.error("Network Error!");
+            self.titles.push("Error");
+          }
+        });
+      });
+    },
+    queryForLocationTitles3(coordinates, id) {
+      //根据经纬度获取poi
+      let self = this;
+      AMap.service("AMap.Geocoder", function() {
+        //回调函数
+        //实例化Geocoder
+        let geocoder = new AMap.Geocoder({
+          city: "021" //城市，默认：“全国”
+        });
+        //TODO: 使用geocoder 对象完成相关功能
+        geocoder.getAddress(coordinates, function(status, result) {
+          if (status === "complete" && result.info === "OK") {
+            //获得了有效的地址信息:
+            //即，result.regeocode.formattedAddress
+            var temp = { id: "", title: "", coordinates: [] };
+            temp.title = result.regeocode.formattedAddress;
+            temp.id = id;
+            temp.coordinates = coordinates;
+            self.loadHotspots.push(temp);
+          } else {
+            //获取地址失败
+            self.$message.error("Network Error!");
+            self.titles.push("Error");
+          }
+        });
+      });
+    },
+    clickPointsCollects(coordinates) {
+      if (!this.isDeleteDestination) {
+        this.$emit("click-on-point", coordinates);
+        console.log(coordinates);
+      }
+      this.isDeleteDestination = false;
+    },
+    deleteDestination(id) {
+      console.log(id);
+      let self = this;
+      this.isDeleteDestination = true;
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + "/favorites/destination",
+        type: "POST",
+        data: {
+          id: id,
+          _method: "DELETE"
+        },
+        dataType: "json",
+        success: function(data) {
+          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+            self.$message({
+              type: "success",
+              message: "Successfully delete!"
+            });
+          } else {
+            self.$message.error(data.rspMsg + "! Please reload the website!");
+          }
+        },
+        error: function(er) {
+          self.$message.error("Network Error");
+        }
+      });
     }
+  },
+  mounted() {
+    this.getUserInfo();
   }
 };
 </script>
@@ -269,10 +522,53 @@ export default {
   height: 70px;
   padding: 15px;
 }
+.el-upload__input {
+  opacity: 0;
+  position: relative;
+  top: 100%;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.el-icon-success:before {
+  content: "\E61D";
+}
+
+.el-alert--success {
+  background: #717171;
+  color: white;
+}
+
+.el-alert__title {
+  text-align: left;
+}
+
+.el-icon-close:before {
+  position: relative;
+  left: 10px;
+}
+
+.uk-card-body {
+  padding: 10px 30px;
+}
 </style>
 
 
 <style scoped type="text/css">
+.uk-nav-primary>li>a {
+    text-align: left;
+    font-size: 17px;
+    line-height: 1.5;
+    color: white;
+}
+
+.uk-nav-primary>li>a {
+    font-family: Helvetica Neue;
+    font-weight: 500;
+}
+
 body {
   background: #616161;
 }
@@ -289,7 +585,7 @@ html {
 .setFooter {
   background: #26292f;
   height: 100px;
-  width: 700%;
+  width: 550%;
   position: relative;
   top: 130px;
   z-index: 13;
@@ -418,12 +714,6 @@ html {
 
 .li-p:hover {
   color: #bdbdbd;
-}
-
-.el-upload__input {
-  opacity: 0;
-  position: relative;
-  top: 100%;
 }
 
 *,
