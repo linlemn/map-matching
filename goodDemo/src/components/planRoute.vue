@@ -51,7 +51,7 @@ export default {
       pickers: [],
       flags: [],
       arriveTime: [],
-      departureTime: []
+      departureTime: [],
     };
   },
   components: {
@@ -130,21 +130,58 @@ export default {
         }); //  返回定位出错信息
       });
     },
-    addMarker: function(poi, identifier, transportation) {
+    addMarker: function(poi) {
       let self = this;
-      function pushAPoi() {
-        //push一个数组到pois
-        for (var i = 0; i < self.pois.length; i++) {
-          //如果已经有了poi就改变
-          if (self.pois[i][1] == identifier) {
-            self.pois.splice(i, 1, [poi, identifier, transportation]);
-            return;
-          }
+      var marker;
+      AMapUI.loadUI(["overlay/SimpleMarker"], function(SimpleMarker) {
+        //启动页面
+        //创建SimpleMarker实例
+        marker = new SimpleMarker({
+          //前景文字
+          iconLabel: {
+            innerHTML: "<div>" + (identifier + 1) + "</div>", //设置文字内容
+            style: {
+              color: "#fff" //设置文字颜色
+            }
+          },
+          //图标主题
+          iconTheme: "fresh",
+          //背景图标样式
+          iconStyle: "black",
+          //...其他Marker选项...，不包括content
+          map: self.mapObj,
+          position: poi.location
+        });
+        function openInfoWin() {
+          infoWindow.open(self.mapObj, marker.getPosition());
         }
-        //如果没有就直接push进去
-        self.pois.push([poi, identifier, transportation]);
+        //marker 点击时打开
+        AMap.event.addListener(marker, "click", function() {
+          openInfoWin();
+        });
+        self.markers.push([marker, identifier]);
+        openInfoWin();
+      });
+      var infoWindow = new AMap.InfoWindow({
+        content: self.createFavouriteDiv(poi),
+        offset: new AMap.Pixel(0, -38),
+        autoMove: true,
+        closeWhenClickMap: true
+      });
+      self.mapObj.setCenter(poi.location);
+    },
+    addSimpleMarker(){ 
+      //根据经纬度获取poi
+      $.post("http://restapi.amap.com/v3/geocode/regeo?",
+      {
+        key: "68612098266e626913da5e9c6fe6cbd0",
+        location: "test@test.com",
+      },
+      function(data) {
+        console.log(data);
       }
-      pushAPoi();
+    );
+      
       var marker;
       AMapUI.loadUI(["overlay/SimpleMarker"], function(SimpleMarker) {
         //启动页面
@@ -453,18 +490,8 @@ export default {
   },
   mounted() {
     this.initMap();
-    //登录
-    $.post(
-      this.urlHeader + "/users/login",
-      {
-        userName: "test",
-        email: "test@test.com",
-        passWord: "test"
-      },
-      function(data) {
-        console.log(data);
-      }
-    );
+    // 登录
+
   }
 };
 </script>

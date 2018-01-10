@@ -43,7 +43,9 @@
             </div>
       </nav>
       <component :is="currentView"
-      @main-on-change="mainOnChange" @change-title="navBarTitleChange">
+      @main-on-change="mainOnChange"
+      @change-title="navBarTitleChange"
+      @click-on-point="clickOnPoint">
       </component>  
     </div>
     <div v-else>
@@ -81,11 +83,18 @@ export default {
       img2: "../static/images/map_ex.png",
       navBarTitle: "Map-Matching",
       activeName: "second",
-      isLogin: true,
-      title: "iTrip"
+      isLogin: false,
+      title: "iTrip",
     };
   },
   methods: {
+    clickOnPoint(val){
+      this.currentView = planRoute;
+      planRoute.center = val;
+      console.log(val)
+      console.log(planRoute.center)
+      planRoute.isPanLocation = false;
+    },
     mainOnChange(val) {
       this.currentView = val;
     },

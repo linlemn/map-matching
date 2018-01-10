@@ -2,7 +2,7 @@
 <div>
     <div id="user-info" class="panel panel-default">
         <a><img :src="avatar" class="img-circle" id="user-avatar" @click="dialogAvatarVisible = true"></a>
-        <el-dialog title="上传头像" :visible.sync="dialogAvatarVisible" center>
+        <el-dialog title="Upload Avatar" :visible.sync="dialogAvatarVisible" center>
             <el-upload
                 action="https://echo.paw.cloud"
                 list-type="picture-card"
@@ -14,29 +14,29 @@
             <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="setAvatar" style="z-index: 2002">确 定</el-button>
+                <el-button type="primary" @click="setAvatar" style="z-index: 2002">OK</el-button>
             </div>
         </el-dialog>
 
         <h1 id="user-name">{{username}}</h1>
         <p id="introduction">{{introduction}}</p>
         <div class="change-part">
-            <el-button class="button-font" type="text" @click="changeIntroduction">修改简介</el-button>
+            <el-button class="button-font" type="text" @click="changeIntroduction">Set Introduction</el-button>
             <button class="button-font">|</button>
-            <el-button class="button-font" type="text" @click="dialogFormVisible = true">修改密码</el-button>
+            <el-button class="button-font" type="text" @click="dialogFormVisible = true">Set Password</el-button>
             <div>              
-                <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-                    旧密码
-                    <el-input v-model="form.oldPwd" auto-complete="off" placeholder="请输入您的旧密码" ></el-input>
+                <el-dialog title="Set Password" :visible.sync="dialogFormVisible">
+                    Old Password
+                    <el-input v-model="form.oldPwd" auto-complete="off" placeholder="Enter your old password" type="password"></el-input>
                     <p> </p>
                     <!-- 验证码
                     <el-input v-model="form.verification" auto-complete="off" placeholder="请输入您的收到的验证码"></el-input>
                     <p> </p> -->
-                    新密码
-                    <el-input v-model="form.newPwd" auto-complete="off" placeholder="请输入您的新密码"></el-input>
+                    New Password
+                    <el-input v-model="form.newPwd" auto-complete="off" placeholder="Enter your new password" type="password"></el-input>
                     <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="changePwd">确 定</el-button>
+                        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                        <el-button type="primary" @click="changePwd">OK</el-button>
                     </div>
                 </el-dialog>
             </div>
@@ -50,16 +50,23 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">目的地收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Destinations Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin" >Collect your destinations</p>
                                 <hr>
                             </div>                           
                         </div>
                     </div>
                     <div class="uk-card-body">
-                        <ul class="uk-list uk-list-divider">
+                        <ul class="uk-list">
+                            <!-- <ul class="uk-list"> -->
                             <li v-for="des in Destinations">
-                                <a class="uk-link-reset"><p class="li-p">{{des.title}}<i class="fa fa-angle-right" style="color: white; position: relative; left:10%;"></i></p></a>
+                                <a class="uk-link-reset" @click="clickPointsCollects(des.coordinates)">
+                                    <el-alert
+                                        :title=des.title
+                                        type="success"
+                                        @close="deleteDestination">
+                                    </el-alert>
+                                </a>
                             </li>
                         </ul>
                     </div>               
@@ -70,7 +77,7 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">路径收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Routes Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin">Collect your paths</p>
                                 <hr>
                             </div>
@@ -86,7 +93,7 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">热点收藏夹</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Hotspot Collects</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font card-margin">Collect the hotspot</p>
                                 <hr>
                             </div>
@@ -102,7 +109,7 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle uk-text-left" uk-grid>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">路径规划历史</h3>
+                                <h3 class="uk-card-title uk-margin-remove-bottom card-font card-font-h3">Routes History</h3>
                                 <p class="uk-margin-remove-top uk-margin-remove-bottom card-font">Latest path you have planned</p>
                                 <hr>
                             </div>
@@ -126,9 +133,6 @@
 </template>
 
 <script>
-// import "../../node_modules/uikit/dist/js/uikit";
-// import "../../node_modules/uikit/dist/js/uikit-icons";
-
 export default {
   name: "mine",
   data() {
@@ -137,9 +141,34 @@ export default {
       username: "bibi",
       introduction: "Latest path you have planned",
       Destinations: [
-        { title: "同济大学嘉定校区" },
-        { title: "同济大学嘉定校区" },
-        { title: "同济大学嘉定校区" }
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        },
+        {
+          title: "同济大学嘉定校区",
+          coordinates: [31.25115, 121.45864]
+        }
       ],
       Paths: [],
       Hotspot: [],
@@ -154,26 +183,49 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       tempImage: "",
-      rs: ""
+      isDeleteDestination: false
     };
   },
   methods: {
     changeIntroduction() {
-      this.$prompt("请输入您的新简介", "修改简介", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消"
+      this.$prompt("Please Enter your new introduction", "Set Introdction", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel"
       })
         .then(({ value }) => {
-          this.$message({
-            type: "success",
-            message: "修改成功！"
+          let self = this;
+          if (value == ''){
+              self.$message.error("")
+          }
+          $.ajax({
+            crossDomain: true,
+            xhrFields: { withCredentials: true },
+            url: self.urlHeader + "/users/introduction",
+            data:{
+                introduction: value,
+            },
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                if (data.rspCode == "200" && data.rspMsg == "操作成功"){
+                    self.introduction = value
+                    self.$message({
+                        type: "success",
+                        message: "Introdction Successfully Set！"
+                    })
+                }else{
+                    self.$message.error(data.rspMsg)
+                }
+            },
+            error: function(er) {
+              self.$message.error("Network Error！")
+            }
           });
-          this.introduction = value;
         })
         .catch(() => {
-          this.$message({
+          self.$message({
             type: "info",
-            message: "取消输入"
+            message: "Input Cancel"
           });
         });
     },
@@ -190,73 +242,72 @@ export default {
       this.dialogAvatarVisible = false;
     },
     changePwd() {
-      //   if(this.form.oldPwd == this.form.newPwd){
-      //       this.$message.error('新密码与旧密码相同！');
-      //   }else{
-      //   let self = this;
-      //   $.post(this.urlHeader + '/users/newPassword', {
-      //     newPassword: self.form.newPwd,
-      //     // userName: this.username4Reg,
-      //     oldPassword: self.form.oldPwd,
-      //     },
-      //     function(data) {
-      //         if (data.rspCode == 200 && data.rspMsg == '操作成功'){
-      //             console.log(data)
-      //             self.form.oldPwd='';
-      //             self.form.newPwd='';
-      //             self.$message({
-      //                 message: '修改成功！',
-      //                 type: 'success'
-      //             });
-      //             self.dialogFormVisible = false
-      //         }else{
-      //             self.$message.error(data.rspMsg);
-      //             return;
-      //         }
-      //     });
       let self = this;
-      $.post(
-        this.urlHeader + "/users/login",
-        {
-          userName: "test",
-          passWord: "newtest"
+      if (self.form.newPwd == self.form.oldPwd) {
+        self.$message.error("The same password！Please reset!");
+        return;
+      }
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + "/users/newPassword",
+        data: {
+          oldPassword: self.form.oldPwd,
+          newPassword: self.form.newPwd
         },
-        function(data) {
-          console.log(data);
-          self.rs = data.rspCode;
-          // console.log(self.rs)
-          console.log(self.rs);
-          if (self.rs == "200") {
-            $.post(
-              self.urlHeader + "/users/newPassword",
-              {
-                oldPassword: "test",
-                newPassword: "newtest"
-              },
-              function(data) {
-                console.log(data);
-              }
-            );
+        type: "POST",
+        dataType: "json",
+        success: function(data) {
+          // console.log(data);
+          if (data.rspCode == "200" && data.rspMsg == "操作成功") {
+            self.$message({
+              type: "success",
+              message: "Successfully Set Password！"
+            });
+          } else {
+            self.$message.error(data.rspMsg);
+            dialogFormVisible = false;
           }
+        },
+        error: function(er) {
+          self.$message.error("Network Error！");
         }
-      );
-
-      // axios.get(this.urlHeader + '/users/introduction')
-      //     .then(function (response) {
-      //         console.log(response);
-      //     })
-      //     .catch(function (error) {
-      //         console.log(error);
-      //     });
-
-      // $.get(this.urlHeader + '/users/info', {
-      // },
-      // function(data) {
-      //     console.log(data)
-      //     self.$message.error(data.rspMsg);
-      // });
-      //   }
+      });
+    },
+    getUserInfo() {
+      let self = this;
+      $.ajax({
+        crossDomain: true,
+        xhrFields: { withCredentials: true },
+        url: self.urlHeader + "/users/info",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+          if (data.rspCode=="200" && data.rspMsg=="操作成功"){
+            self.username = data.data.userName;
+            self.introduction = data.data.introduction;
+          }else{
+            console.log(data);
+            self.$message.error(data.rspMsg);
+          }
+        },
+        error: function(er) {
+          BackErr(er);
+        }
+      });
+    },
+    clickPointsCollects(coordinates) {
+      if (!this.isDeleteDestination) {
+        this.$emit("click-on-point", coordinates);
+      }
+      this.isDeleteDestination = false;
+    },
+    deleteDestination(order) {
+      this.isDeleteDestination = true;
     }
+  },
+  mounted() {
+    this.getUserInfo();
   }
 };
 </script>
@@ -269,10 +320,24 @@ export default {
   height: 70px;
   padding: 15px;
 }
+.el-upload__input {
+  opacity: 0;
+  position: relative;
+  top: 100%;
+}
+
+input[type="file"] {
+  display: none;
+}
 </style>
 
 
 <style scoped type="text/css">
+.el-alert--success {
+  background: #757575;
+  color: white;
+}
+
 body {
   background: #616161;
 }
@@ -289,7 +354,7 @@ html {
 .setFooter {
   background: #26292f;
   height: 100px;
-  width: 700%;
+  width: 500%;
   position: relative;
   top: 130px;
   z-index: 13;
@@ -418,12 +483,6 @@ html {
 
 .li-p:hover {
   color: #bdbdbd;
-}
-
-.el-upload__input {
-  opacity: 0;
-  position: relative;
-  top: 100%;
 }
 
 *,

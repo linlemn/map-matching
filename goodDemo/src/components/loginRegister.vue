@@ -5,58 +5,58 @@
                     <div class="uk-grid-small uk-flex-middle" uk-grid>
                         <div class="uk-width-expand">
                             <h1 class="login-header" >iTrip</h1>
-                            <h1 class="login-header" style="font-size: 48px; font-weight: 900; font-family: PingFang SC; margin-top:-10px; margin-bottom: 20px;">多点路径规划和热点推荐系统</h1>
+                            <h1 class="login-header" style="font-size: 36px; font-weight: 100; font-family: Helvetica Neue; margin-top:-10px; margin-bottom: 20px;">Traffic Congestion Prediction & Multi-destination Route Planning</h1>
                         </div>
                     </div>
                     <ul class="uk-child-width-expand" uk-tab>
-                        <li class="uk-active"><a href="#email" data-toggle="tab"><p>邮箱登录</p></a></li>
-                        <li><a href="#username" data-toggle="tab"><p>用户名登录</p></a></li>
-                        <li><a href="#register" data-toggle="tab"><p>注册</p></a></li>
+                        <li class="uk-active"><a href="#email" data-toggle="tab"><p>Email Login</p></a></li>
+                        <li><a href="#username" data-toggle="tab"><p>Username Login</p></a></li>
+                        <li><a href="#register" data-toggle="tab"><p>Register</p></a></li>
                     </ul>
                     <div id="myTabContent" class="tab-content">
                         <div class="tab-pane fade in active" id="email">
                             <div style="margin-top: 30px;">
-                                <el-input placeholder="请输入您的注册邮箱" v-model="emailAddress4Login" style="width: 480px">
+                                <el-input placeholder="Please enter your email" v-model="emailAddress4Login" style="width: 480px">
                                     <i class="el-icon-message el-input__icon" slot="prefix"></i>
                                 </el-input>
                             </div>
                             <div style="margin-top: 30px; margin-bottom: 50px;">
-                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="请输入您的密码" v-model="pwd4Email" style="width: 480px" type="password">
+                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="Please enter your password" v-model="pwd4Email" style="width: 480px" type="password">
                                 </el-input>
                             </div>
                             <div class="uk-card-footer">
-                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="loginOnEmail">登录</el-button>
+                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="loginOnEmail">Login</el-button>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="username">
                             <div style="margin-top: 30px;">
-                                <el-input prefix-icon="fa fa-user fa-fw" placeholder="请输入您的用户名" v-model="userName4Login" style="width: 480px">
+                                <el-input prefix-icon="fa fa-user fa-fw" placeholder="Please enter your username" v-model="userName4Login" style="width: 480px">
                                 </el-input>
                             </div>
                             <div style="margin-top: 30px; margin-bottom: 50px;">
-                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="请输入您的密码" v-model="pwd4Username" style="width: 480px" type="password">
+                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="Please enter your password" v-model="pwd4Username" style="width: 480px" type="password">
                                 </el-input>
                             </div>
                             <div class="uk-card-footer">
-                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="loginOnUsername">登录</el-button>
+                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="loginOnUsername">Login</el-button>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="register">
                             <div style="margin-top: 30px;">
-                                <el-input prefix-icon="fa fa-user fa-fw" placeholder="请输入您的用户名" v-model="username4Reg" style="width: 480px">
+                                <el-input prefix-icon="fa fa-user fa-fw" placeholder="Please enter a new username" v-model="username4Reg" style="width: 480px">
                                 </el-input>
                             </div>
                             <div style="margin-top: 30px;">
-                                <el-input placeholder="请输入您的注册邮箱" v-model="emailAddress4Reg" style="width: 480px">
+                                <el-input placeholder="Please enter an email address" v-model="emailAddress4Reg" style="width: 480px">
                                         <i class="el-icon-message el-input__icon" slot="prefix"></i>
                                 </el-input>
                             </div>
                             <div style="margin-top: 30px; margin-bottom: 50px;">
-                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="请输入您的密码" v-model="pwd4Reg" style="width: 480px" type="password">
+                                <el-input prefix-icon="fa fa-key fa-fw" placeholder="Please enter your password" v-model="pwd4Reg" style="width: 480px" type="password">
                                 </el-input>
                             </div>
                             <div class="uk-card-footer">
-                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="register">登录</el-button>
+                                 <el-button type="info" style="width: 480px; background: #424242 font-weight: 100" @click="register">Register</el-button>
                             </div>
                         </div>
                     </div>
