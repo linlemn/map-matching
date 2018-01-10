@@ -6,20 +6,16 @@
           <i class="icon-locate"></i>
           <input class="start" type="text" name="start" placeholder="Search Your Destinations" v-on:focus="focus()">
         </div>
-        <!-- <div id="search-box">
-                                                <i class="icon-locate" style="top: 15px;"></i>
-                                                <input class="end" type="text" name="end" placeholder="Search Your Destination" v-on:focus="focus()">
-                                              </div> -->
       </div>
       <div id="timepicker">
         <el-date-picker v-model="departure" type="datetime" placeholder="Choose Or Generate" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm" size="mini" style="width: 200px;" :picker-options="startPickerOptions" @change="onStartDatetimeChanged()"></el-date-picker>
-          <el-radio-group v-model="transportation" style="position: relative; width: 200px; top: 8px; left: 0" size="mini" fill="#26282D" @change="transportationChange">
-            <el-radio-button label="Drive" id="radioBut"></el-radio-button>
-            <!-- <el-radio-button label="Bus" id="radioBut"></el-radio-button> -->
-            <el-radio-button label="Walk" id="radioBut"></el-radio-button>
-            <el-radio-button label="Metro/Bus" id="radioBut"></el-radio-button>
-          </el-radio-group>
-        <el-date-picker v-if="ifArriveTimeBoxShow" v-model="arrival" type="datetime" placeholder="Choose Arrival Time" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm" size="mini" style="width: 200px; top: 10px;" :picker-options="endPickerOptions" @change="onEndDatetimeChanged()" v-show="ifArriveTimeBoxShow"></el-date-picker>
+        <el-radio-group v-model="transportation" style="position: relative; width: 200px; top: 8px; left: 0" size="mini" fill="#26282D" @change="transportationChange">
+          <el-radio-button label="Drive" id="radioBut"></el-radio-button>
+          <el-radio-button label="Walk" id="radioBut"></el-radio-button>
+          <el-radio-button label="Metro/Bus" id="radioBut"></el-radio-button>
+        </el-radio-group>
+        <el-date-picker v-if="ifArriveTimeBoxShow" v-model="arrival" type="datetime" placeholder="Choose Arrival Time" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm" size="mini" style="width: 200px; top: 10px;" :picker-options="endPickerOptions" @change="onEndDatetimeChanged()"
+          v-show="ifArriveTimeBoxShow"></el-date-picker>
         <el-date-picker v-if="!ifArriveTimeBoxShow" disabled type="datetime" placeholder="Choose Arrival Time" style="width: 200px; top: 10px;" size="mini"></el-date-picker>
       </div>
     </div>
@@ -123,7 +119,7 @@
         } else if (this.departure.length == 0) {
           return
         }
-        var timeStamp = (new Date(this.departure)).valueOf()
+        var timeStamp = (new Date(this.departure)).valueOf()/1000
         this.$parent.removePreArrTimeAddNew(this.identifier, timeStamp)
       },
       onEndDatetimeChanged: function() {
@@ -136,7 +132,7 @@
         } else if (this.arrival.length == 0) {
           return
         }
-        var timeStamp = (new Date(this.arrival)).valueOf()
+        var timeStamp = (new Date(this.arrival)).valueOf()/1000
         this.$parent.removePreArrTimeAddNew(this.identifier, timeStamp)
       },
       clear: function() {
@@ -219,7 +215,8 @@
         //改变placeHolder
         if (this.$parent.pickers.length == 1) {
           startBox.setAttribute('placeholder', 'Search Your Start Point')
-          this.ifArriveTimeBoxShow = false 
+          this.ifArriveTimeBoxShow = false
+          this.$parent.removePreArrTimeAddNew(this.identifier, 1515392760)
         }
       })
     }
